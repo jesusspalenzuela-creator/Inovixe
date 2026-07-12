@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data:;">
+  <title>Activación de Finovixe</title>
+  <link rel="stylesheet" href="./css/sweetalert2.min.css">
+  <link rel="stylesheet" href="./css/estilos.css">
+  <script src="./src/js/tailwindcss.js"></script>
+  <script src="./src/js/sweetalert2.min.js"></script>
+  <script src="./src/js/jspdf.umd.min.js"></script>
+  <script src="./src/js/jspdf.plugin.autotable.min.js"></script>
+  <script src="./src/js/html2pdf.bundle.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #f8fafc; }
+    .caja-activacion { background: #1e293b; padding: 40px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); text-align: center; max-width: 520px; width: 100%; border: 1px solid #334155; }
+    .caja-activacion h1 { color: #ffffff; font-size: 28px; margin-bottom: 12px !important; font-weight: 700; }
+    .inovix-x { color: #3b82f6; }
+    .caja-activacion p { color: #94a3b8; font-size: 14px; margin-bottom: 38px !important; line-height: 1.6; }
+    .input-block { margin-bottom: 14px !important; text-align: left; width: 100%; }
+    .input-block label { display: block; font-size: 12px; color: #3b82f6; text-transform: uppercase; font-weight: bold; margin-bottom: 8px !important; letter-spacing: 1px; }
+    .input-group { display: flex; gap: 10px; width: 100%; }
+    .hwid-box { background: #0f172a !important; border-radius: 8px !important; font-family: 'Courier New', monospace; font-size: 16px; letter-spacing: 1px; color: #38bdf8; font-weight: bold; flex: 1 1 auto; display: flex; align-items: center; padding: 0 20px !important; border: 1px solid #334155 !important; height: 48px !important; min-width: 0; overflow: hidden; white-space: nowrap; }
+    input { flex: 1 1 auto; padding: 0 20px !important; background: #0f172a !important; border: 1px solid #334155 !important; border-radius: 8px !important; font-size: 16px !important; font-family: 'Courier New', monospace; letter-spacing: 1px; color: #ffffff !important; text-transform: uppercase; outline: none; transition: all 0.3s; height: 48px !important; min-width: 0; }
+    input:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important; }
+    .action-btn { background: #334155 !important; color: #ffffff !important; border: none !important; border-radius: 8px !important; padding: 0 20px !important; cursor: pointer; font-size: 13px; font-weight: 600; transition: background 0.2s; white-space: nowrap; display: flex; justify-content: center; align-items: center; height: 48px !important; flex-shrink: 0; }
+    .action-btn:hover { background: #475569 !important; }
+    .main-btn { background: #2563eb !important; color: white !important; border: none !important; padding: 14px !important; font-size: 16px; font-weight: bold; border-radius: 8px !important; cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 15px !important; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.4) !important; height: 50px !important; }
+    .main-btn:hover { background: #1d4ed8 !important; }
+    .error { color: #f87171; margin-top: 15px !important; display: none; font-weight: 500; font-size: 14px; }
+    .success-msg { color: #34d399; font-size: 12px; margin-top: 6px !important; min-height: 18px; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="caja-activacion">
+    <h1>Activación de Finovi<span class="inovix-x">xe</span></h1>
+    <p>Introduce una credencial de licencia válida para desbloquear Finovi<span class="inovix-x">xe</span>. Si no dispones de una, facilita el identificador de equipo al soporte.</p>
+    <div class="input-block">
+      <label>Identificador del Equipo (HWID)</label>
+      <div class="input-group">
+        <div id="hwid-display" class="hwid-box">Cargando...</div>
+        <button id="btn-copiar" class="action-btn">Copiar ID</button>
+      </div>
+      <div id="copy-success" class="success-msg"></div>
+    </div>
+    <div class="input-block">
+      <label>Credencial de Activación</label>
+      <div class="input-group">
+        <input type="text" id="licencia-input" placeholder="0000-0000-0000-0000" autocomplete="off">
+        <button id="btn-pegar" class="action-btn">Pegar Credencial</button>
+      </div>
+    </div>
+    <button id="btn-activar" class="main-btn">Activar Licencia</button>
+    <p id="error-msg" class="error"></p>
+  </div>
+  <script>
+    let currentHWID = "";
+    const els = {
+      hwid: document.getElementById('hwid-display'),
+      licencia: document.getElementById('licencia-input'),
+      error: document.getElementById('error-msg'),
+      copyMsg: document.getElementById('copy-success')
+    };
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        currentHWID = await window.electronAPI.licencia.obtenerHWID();
+        els.hwid.innerText = currentHWID;
+      } catch (e) {
+        currentHWID = "ERROR-AL-GENERAR-ID";
+        els.hwid.innerText = currentHWID;
+      }
+    });
+    document.getElementById('btn-copiar').addEventListener('click', async () => {
+      if (currentHWID && !currentHWID.includes("ERROR")) {
+        await navigator.clipboard.writeText(currentHWID);
+        els.copyMsg.innerText = "✓ Identificador copiado";
+        setTimeout(() => els.copyMsg.innerText = "", 3000);
+      }
+    });
+    document.getElementById('btn-pegar').addEventListener('click', async () => {
+      try {
+        els.licencia.value = (await navigator.clipboard.readText()).trim().toUpperCase();
+      } catch (e) { alert("Usa Ctrl + V."); }
+    });
+    document.getElementById('btn-activar').addEventListener('click', async () => {
+      const llave = els.licencia.value;
+      if (!llave) {
+        els.error.innerText = "Por favor, introduce una credencial de activación.";
+        els.error.style.display = 'block';
+        return;
+      }
+      if (await window.electronAPI.licencia.intentarActivacion(llave)) {
+        document.body.innerHTML = `<div style='text-align: center; padding: 40px;'><h2 style='color:#ffffff; font-size:24px; margin-bottom:10px;'>✓ Licencia Verificada</h2><p style='color:#94a3b8;'>Desbloqueando Finovi<span class='inovix-x'>xe</span>...</p></div>`;
+      } else {
+        els.error.innerText = "La credencial ingresada es inválida o expiró.";
+        els.error.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data:;">
+  <title>Finovixe - Login</title>
+  <script src="./src/js/tailwindcss.js"></script>
+  <script src="./src/js/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="./css/sweetalert2.min.css">
+  <script src="./src/js/jspdf.umd.min.js"></script>
+  <script src="./src/js/jspdf.plugin.autotable.min.js"></script>
+  <script src="./src/js/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="./css/estilos.css">
+  <style>
+    * {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #0a0f1c 0%, #07101c 50%, #0d1525 100%);
+      overflow: hidden;
+    }
+    .login-panel {
+      background: #ffffff;
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+    .login-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .login-input:focus {
+      border-color: #001f3f;
+      box-shadow: 0 0 0 3px rgba(0,31,63,0.1);
+    }
+    .btn-login {
+      width: 100%;
+      background: linear-gradient(135deg, #001f3f 0%, #003366 100%);
+      color: white;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,31,63,0.3);
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,31,63,0.4);
+    }
+    .btn-login:active {
+      transform: scale(0.98);
+    }
+    .login-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4 min-h-screen">
+  <div class="login-panel w-full max-w-md overflow-hidden">
+    <div class="text-center pt-8 pb-2 px-6">
+      <div class="inline-flex items-center gap-2 mb-2">
+        <div class="w-1.5 h-8 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.6)]"></div>
+        <h1 class="text-4xl font-black tracking-tight text-[#001f3f]">
+          FINOVI<span class="text-blue-600">XE</span>
+        </h1>
+      </div>
+      <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1">Tecnología que impulsa tu negocio</p>
+    </div>
+    <div class="px-8 pb-6 pt-2">
+      <h2 class="text-sm font-bold text-slate-700 mb-5 text-center uppercase tracking-wide">Iniciar Sesión</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="login-label">Usuario</label>
+          <input id="user" type="text" placeholder="Nombre de usuario" class="login-input">
+        </div>
+        <div>
+          <label class="login-label">Contraseña</label>
+          <input id="password" type="password" placeholder="••••••••" class="login-input">
+        </div>
+        <button onclick="intentarLogin()" id="btn-login" class="btn-login mt-2">
+          INGRESAR AL SISTEMA
+        </button>
+      </div>
+      <div class="flex flex-wrap gap-2 justify-center mt-6 pt-5 border-t border-slate-100">
+        <div class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] text-slate-500 font-semibold flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> v1.0.0
+        </div>
+        <div class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] text-slate-500 font-semibold flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> soporte@inovixe.com
+        </div>
+      </div>
+      <div class="text-center text-[9px] text-slate-400 mt-3 font-medium">
+        Desarrollado por <span class="text-black font-bold">Inóvi<span class="text-blue-600">x</span>e</span>
+        <button onclick="window.electronAPI.utils.openExternalLink('https://inovixe.com')" class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-semibold hover:bg-blue-700 transition-colors ml-1">🌐 inovixe.com</button>
+      </div>
+    </div>
+  </div>
+  <script src="./src/js/login.js"></script>
+<script src="src/js/preload.js"></script>
+</body>
+</html>

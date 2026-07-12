@@ -1,0 +1,35 @@
+:root {
+    --primary-blue: #2563eb;
+    --bg-light: #f8fafc;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.card-premium {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+}
+
+.card-premium:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #cbd5e1;
+}
+
+.text-label {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+html, body {
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+html.swal2-height-auto,
+body.swal2-height-auto {
+  height: 100% !important;
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data:;">
+  <title>Reportes | Inovix</title>
+  <script src="./src/js/tailwindcss.js"></script>
+  <script src="./src/js/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="./css/sweetalert2.min.css">
+  <script src="./src/js/jspdf.umd.min.js"></script>
+  <script src="./src/js/jspdf.plugin.autotable.min.js"></script>
+  <script src="./src/js/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="./css/estilos.css">
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body {
+      background: linear-gradient(145deg, #f0f4ff 0%, #e0e7ff 100%);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .glass-panel {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .dia-card {
+      background: white;
+      border-radius: 20px;
+      padding: 16px 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      border: 1px solid rgba(226,232,240,0.6);
+      animation: fadeSlide 0.4s ease forwards;
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .dia-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 30px -10px rgba(0,31,63,0.12);
+      border-color: #cbd5e1;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .avatar-dia {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #001f3f 0%, #003366 100%);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 8px 16px -4px rgba(0,31,63,0.25);
+      flex-shrink: 0;
+    }
+    .avatar-dia .dia-num {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .avatar-dia .dia-mes {
+      font-size: 9px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+    .btn-generar {
+      background: linear-gradient(135deg, #001f3f 0%, #003366 100%);
+      color: white;
+      font-weight: 600;
+      font-size: 0.75rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,31,63,0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-generar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0,31,63,0.3);
+    }
+    .search-wrapper {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: box-shadow 0.2s;
+    }
+    .search-wrapper:focus-within {
+      box-shadow: 0 15px 30px -8px rgba(0,31,63,0.12);
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="h-full flex flex-col p-5">
+  <div class="flex flex-col gap-5 flex-1 h-full w-full relative min-h-0 max-w-5xl mx-auto">
+    <div class="relative w-full search-wrapper">
+      <svg class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input type="text" id="buscar-fecha" placeholder="Buscar fecha (ej: 2026-05)..." autocomplete="off"
+             class="w-full h-12 pl-14 pr-5 text-sm bg-transparent rounded-2xl focus:outline-none placeholder:text-slate-400 text-slate-700 font-medium">
+    </div>
+    <div class="flex-1 glass-panel flex flex-col overflow-hidden min-h-0">
+      <div class="bg-slate-50/70 border-b border-slate-200 h-12 flex items-center px-6 shrink-0 backdrop-blur-sm">
+        <div class="text-xs font-bold text-slate-600 uppercase tracking-wide flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Días con actividad registrada
+        </div>
+      </div>
+      <div id="dias-container" class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-3"></div>
+    </div>
+  </div>
+  <script src="./src/js/reportes.js"></script>
+  <script>
+    document.addEventListener('mousedown', (e) => { if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) e.target.focus(); }, true);
+  </script>
+</body>
+</html>

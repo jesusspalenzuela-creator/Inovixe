@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data:;">
+  <title>Clientes | Inovix</title>
+  <script src="./src/js/tailwindcss.js"></script>
+  <script src="./src/js/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="./css/sweetalert2.min.css">
+  <script src="./src/js/jspdf.umd.min.js"></script>
+  <script src="./src/js/jspdf.plugin.autotable.min.js"></script>
+  <script src="./src/js/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="./css/estilos.css">
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body {
+      background: linear-gradient(145deg, #eef2ff 0%, #e0e7ff 100%);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .glass-panel {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .client-card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      border: 1px solid rgba(226,232,240,0.6);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      animation: fadeSlide 0.4s ease forwards;
+      opacity: 0;
+    }
+    .client-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 30px -10px rgba(0,31,63,0.12);
+      border-color: #cbd5e1;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .avatar {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #001f3f 0%, #003366 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 22px;
+      box-shadow: 0 8px 16px -4px rgba(0,31,63,0.25);
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .action-btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-historial {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    .btn-historial:hover { background: #d1fae5; }
+    .btn-editar {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+    .btn-editar:hover { background: #dbeafe; }
+    .btn-eliminar {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    .btn-eliminar:hover { background: #fee2e2; }
+    .search-wrapper {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: box-shadow 0.2s;
+    }
+    .search-wrapper:focus-within {
+      box-shadow: 0 15px 30px -8px rgba(0,31,63,0.12);
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .footer-bar {
+      background: rgba(248,250,252,0.8);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col p-5">
+  <div class="flex flex-col gap-5 flex-1 h-full w-full relative min-h-0 max-w-5xl mx-auto">
+    <div class="flex gap-4 items-center shrink-0">
+      <div class="relative flex-1 search-wrapper">
+        <svg class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" id="buscar-cliente" placeholder="Buscar cliente por nombre..." autocomplete="off"
+               class="w-full h-12 pl-14 pr-5 text-sm bg-transparent rounded-2xl focus:outline-none placeholder:text-slate-400 text-slate-700 font-medium">
+      </div>
+      <button onclick="abrirModalNuevoCliente()"
+              class="h-12 px-7 bg-gradient-to-r from-[#001f3f] to-[#003366] text-white font-semibold text-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 whitespace-nowrap hover:scale-105">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+        Nuevo cliente
+      </button>
+    </div>
+    <div class="flex-1 glass-panel flex flex-col overflow-hidden min-h-0">
+      <div id="clientes-container" class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-3"></div>
+      <div class="footer-bar h-10 flex items-center px-6 shrink-0 text-xs text-slate-500 font-medium">
+        <span id="clientes-count">0 clientes</span>
+      </div>
+    </div>
+  </div>
+  <div id="modal-historial" class="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4">
+    <div class="card-premium w-[950px] max-h-[80vh] flex flex-col border-0 shadow-2xl p-0 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+        <h3 id="hist-titulo" class="text-sm font-bold text-zinc-900 uppercase tracking-wider">HISTORIAL</h3>
+        <button onclick="cerrarModal()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold transition-colors">X</button>
+      </div>
+      <div id="hist-container" class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar bg-white"></div>
+    </div>
+  </div>
+  <div id="modal-cliente" class="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm hidden z-[110] flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-[400px] p-6 border border-slate-200 flex flex-col gap-4">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 id="modal-cli-titulo" class="text-sm font-bold text-zinc-900 uppercase">NUEVO CLIENTE</h3>
+        <button onclick="cerrarModalNuevoCliente()" class="text-slate-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all">X</button>
+      </div>
+      <div class="flex flex-col gap-3 mt-1">
+        <div><label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Nombre Completo</label><input type="text" id="mod-cli-nombre" placeholder="Nombre" class="w-full h-9 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg mt-1 outline-none focus:ring-2 focus:ring-blue-500"></div>
+        <div><label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Teléfono (WhatsApp)</label><input type="text" id="mod-cli-tel" placeholder="Teléfono" class="w-full h-9 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg mt-1 outline-none focus:ring-2 focus:ring-blue-500"></div>
+      </div>
+      <div class="flex gap-3 mt-4">
+        <button onclick="cerrarModalNuevoCliente()" class="flex-1 h-10 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-[12px] rounded-xl transition-colors">Cancelar</button>
+        <button onclick="guardarNuevoCliente()" class="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[12px] rounded-xl transition-colors">Guardar</button>
+      </div>
+    </div>
+  </div>
+  <script src="./src/js/clientes.js"></script>
+  <script>
+    document.addEventListener('mousedown', (e) => { if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) e.target.focus(); }, true);
+  </script>
+</body>
+</html>
