@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Mi Niña ❤️</title>
+    
+    <!-- Fuentes de Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS CSS --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 500px;
+            perspective: 1000px;
+        }
+
+        /* Efecto Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .glass-card h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff9a9e;
+        }
+
+        .glass-card p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #e2e2e2;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            border: none;
+            border-radius: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #302b63;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 154, 158, 0.6);
+        }
+
+        /* Clases para manejar transiciones */
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -40%) scale(0.9);
+        }
+
+        .active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Pantalla de mensaje */
+        #message-screen {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #title-msg {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.2rem;
+            color: #ff9a9e;
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #typed-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            min-height: 120px;
+            text-align: left;
+        }
+
+        #hearts {
+            font-size: 2rem;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .fade-in {
+            opacity: 1 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas para las partículas mágicas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Contenedor Principal -->
+    <div class="container">
+        <!-- Pantalla de inicio -->
+        <div id="start-screen" class="glass-card active">
+            <h1>Tengo algo para ti...</h1>
+            <p>Toca el botón para descubrirlo ✨</p>
+            <button id="start-btn">Abrir sorpresa</button>
+        </div>
+
+        <!-- Pantalla del mensaje -->
+        <div id="message-screen" class="glass-card hidden">
+            <div class="message-content">
+                <h2 id="title-msg" class="hidden-element">Feliz Día del Niño</h2>
+                <p id="typed-text"></p>
+                <div id="hearts" class="hidden-element">❤️❤️❤️</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CÓDIGO JAVASCRIPT ---
+        
+        // 1. LÓGICA DEL LIENZO (PARTÍCULAS)
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray = [];
+        const colors = ['#ff9a9e', '#fecfef', '#ffffff', '#a18cd1'];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Rebote en los bordes
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.width * canvas.height) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // Ajustar tamaño del canvas al redimensionar la ventana
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        // 2. LÓGICA DE INTERACCIÓN Y TEXTO
+        const startBtn = document.getElementById('start-btn');
+        const startScreen = document.getElementById('start-screen');
+        const messageScreen = document.getElementById('message-screen');
+        const typedTextElement = document.getElementById('typed-text');
+        const titleMsg = document.getElementById('title-msg');
+        const heartsElement = document.getElementById('hearts');
+
+        // MENSAJE A MOSTRAR (Usa \n para saltos de línea)
+        const mensaje = "Aunque el tiempo pase y ya seamos grandes...\n\nTú siempre vas a ser mi niña favorita.\n\n¡Eres lo mejor que me ha pasado! ❤️";
+
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (charIndex < mensaje.length) {
+                if (mensaje.charAt(charIndex) === '\n') {
+                    typedTextElement.innerHTML += '<br>';
+                } else {
+                    typedTextElement.innerHTML += mensaje.charAt(charIndex);
+                }
+                charIndex++;
+                // Velocidad de escritura (50ms por letra)
+                setTimeout(typeWriter, 50);
+            } else {
+                // Al terminar de escribir, mostrar los corazones
+                heartsElement.classList.add('fade-in');
+            }
+        }
+
+        startBtn.addEventListener('click', () => {
+            // Acelerar partículas para un efecto wow
+            particlesArray.forEach(p => {
+                p.speedX *= 3;
+                p.speedY *= 3;
+            });
+
+            // Cambiar de pantalla con fundido
+            startScreen.classList.remove('active');
+            startScreen.classList.add('hidden');
+            
+            setTimeout(() => {
+                messageScreen.classList.remove('hidden');
+                messageScreen.classList.add('active');
+                
+                // Aparece el título principal
+                setTimeout(() => {
+                    titleMsg.classList.add('fade-in');
+                    
+                    // Comienza a escribir el mensaje principal después de un segundo
+                    setTimeout(typeWriter, 1000);
+                }, 500);
+            }, 800);
+        });
+    </script>
+</body>
+</html>
