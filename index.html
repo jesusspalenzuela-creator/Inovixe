@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        /* --- ESTILOS CSS --- */
+        /* --- ESTILOS GLOBALES --- */
         * {
             margin: 0;
             padding: 0;
@@ -47,7 +47,7 @@
             perspective: 1000px;
         }
 
-        /* Efecto Glassmorphism */
+        /* --- EFECTO GLASSMORPHISM --- */
         .glass-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
@@ -69,7 +69,6 @@
             font-family: 'Pacifico', cursive;
             font-size: 2.8rem;
             margin-bottom: 15px;
-            /* Rosa Profundo y Vibrante */
             color: #FF1493; 
             text-shadow: 0 0 15px rgba(255, 20, 147, 0.7);
         }
@@ -82,7 +81,6 @@
         }
 
         button {
-            /* Degradado de botón vibrante: De Rosa Profundo a Azul Eléctrico */
             background: linear-gradient(45deg, #FF1493 0%, #00d4ff 100%);
             border: none;
             border-radius: 30px;
@@ -102,7 +100,7 @@
             box-shadow: 0 8px 25px rgba(255, 20, 147, 0.8);
         }
 
-        /* Clases para manejar transiciones */
+        /* --- PANTALLAS Y ANIMACIONES --- */
         .hidden {
             opacity: 0;
             pointer-events: none;
@@ -115,7 +113,6 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
-        /* Pantalla de mensaje */
         #message-screen {
             min-height: 400px;
             display: flex;
@@ -126,7 +123,6 @@
         #title-msg {
             font-family: 'Pacifico', cursive;
             font-size: 2.5rem;
-            /* Rosa Vibrante para el título del mensaje */
             color: #FF1493;
             margin-bottom: 25px;
             opacity: 0;
@@ -143,14 +139,6 @@
             color: #fff;
         }
 
-        #hearts-row {
-            font-size: 2rem;
-            margin-top: 20px;
-            opacity: 0;
-            transition: opacity 1s ease;
-            color: #FF0000; /* Corazones Rojos */
-        }
-
         #final-row {
             font-size: 2.5rem;
             margin-top: 25px;
@@ -162,15 +150,49 @@
         }
 
         #final-heart {
-            color: #FF0000; /* Corazón Rojo Final */
+            color: #FF0000;
         }
 
         #final-star {
-            color: #FFD700; /* Estrellita Dorada Final */
+            color: #FFD700;
         }
 
         .fade-in {
             opacity: 1 !important;
+        }
+
+        /* --- RESPONSIVE DESIGN (MÓVILES) --- */
+        @media (max-width: 480px) {
+            .glass-card {
+                padding: 30px 20px;
+            }
+            .glass-card h1 {
+                font-size: 2.2rem;
+            }
+            .glass-card p {
+                font-size: 1rem;
+                margin-bottom: 25px;
+            }
+            button {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+            #message-screen {
+                min-height: 420px; /* Un poco más de espacio para el texto en varias líneas */
+            }
+            #title-msg {
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+            #typed-text {
+                font-size: 1.05rem;
+                line-height: 1.6;
+                min-height: 180px;
+            }
+            #final-row {
+                font-size: 2rem;
+                margin-top: 15px;
+            }
         }
     </style>
 </head>
@@ -192,8 +214,6 @@
             <div class="message-content">
                 <h2 id="title-msg">Feliz Día del Niño</h2>
                 <p id="typed-text"></p>
-                <!-- Fila con los tres corazones rojos -->
-                <div id="hearts-row">❤️❤️❤️</div>
                 <!-- Fila con el corazón rojo y la estrellita final -->
                 <div id="final-row">
                     <span id="final-heart">❤️</span>
@@ -206,7 +226,7 @@
     <script>
         // --- CÓDIGO JAVASCRIPT ---
         
-        // 1. LÓGICA DEL LIENZO (PARTÍCULAS MEJORADAS)
+        // 1. LÓGICA DEL LIENZO (PARTÍCULAS)
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -214,24 +234,22 @@
         canvas.height = window.innerHeight;
 
         let particlesArray = [];
-        // Paleta de partículas: Rosa Vibrante, Azul Eléctrico, Oro, Blanco
         const colors = ['#FF1493', '#00FFFF', '#FFD700', '#FFFFFF'];
 
         class Particle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 0.5; // Tamaños variados
+                this.size = Math.random() * 3 + 0.5;
                 this.speedX = Math.random() * 0.8 - 0.4;
                 this.speedY = Math.random() * 0.8 - 0.4;
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.opacity = Math.random() * 0.5 + 0.2; // Opacidad variable para profundidad
+                this.opacity = Math.random() * 0.5 + 0.2;
             }
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
 
-                // Rebote suave en los bordes
                 if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
             }
@@ -248,7 +266,6 @@
 
         function initParticles() {
             particlesArray = [];
-            // Densidad basada en la resolución
             let numberOfParticles = (canvas.width * canvas.height) / 7000; 
             for (let i = 0; i < numberOfParticles; i++) {
                 particlesArray.push(new Particle());
@@ -267,23 +284,20 @@
         initParticles();
         animateParticles();
 
-        // Ajustar tamaño del canvas al redimensionar la ventana
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
         });
 
-        // 2. LÓGICA DE INTERACCIÓN Y TEXTO MODIFICADO
+        // 2. LÓGICA DE INTERACCIÓN Y TEXTO
         const startBtn = document.getElementById('start-btn');
         const startScreen = document.getElementById('start-screen');
         const messageScreen = document.getElementById('message-screen');
         const typedTextElement = document.getElementById('typed-text');
         const titleMsg = document.getElementById('title-msg');
-        const heartsRow = document.getElementById('hearts-row');
         const finalRow = document.getElementById('final-row');
 
-        // --- NUEVO MENSAJE AJUSTADO ---
         const mensaje = "Aunque ya crecimos, hoy es un buen día para recordar que siempre hay que cuidar nuestra sonrisa...\n\nY quería decirte que la tuya es mi favorita.\n\nMe gustas mucho y, para mí, tú siempre serás mi niña favorita.";
 
         let charIndex = 0;
@@ -298,31 +312,24 @@
                 charIndex++;
                 setTimeout(typeWriter, 60);
             } else {
-                // Al terminar de escribir, mostrar los corazones
+                // Mostrar el corazón y la estrella poco después de terminar
                 setTimeout(() => {
-                    heartsRow.classList.add('fade-in');
-                    // Mostrar el final especial poco después
-                    setTimeout(() => {
-                        finalRow.classList.add('fade-in');
-                    }, 1000);
-                }, 500);
+                    finalRow.classList.add('fade-in');
+                }, 800);
             }
         }
 
         startBtn.addEventListener('click', () => {
-            // Explosión de partículas al hacer click
             particlesArray.forEach(p => {
                 p.speedX *= 6;
                 p.speedY *= 6;
                 p.size *= 1.5;
             });
 
-            // Cambiar de pantalla con fundido
             startScreen.classList.remove('active');
             startScreen.classList.add('hidden');
             
             setTimeout(() => {
-                // Volver las partículas a la normalidad
                 particlesArray.forEach(p => {
                     p.speedX /= 5;
                     p.speedY /= 5;
@@ -332,11 +339,9 @@
                 messageScreen.classList.remove('hidden');
                 messageScreen.classList.add('active');
                 
-                // Aparece el título principal
                 setTimeout(() => {
                     titleMsg.classList.add('fade-in');
                     
-                    // Comienza a escribir el mensaje principal
                     setTimeout(typeWriter, 1000);
                 }, 500);
             }, 800);
